@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "775414097791",
+    "project_id": "justudyenglish-9a634",
+    "storage_bucket": "justudyenglish-9a634.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775414097791:android:fdcef8b173749bcfa75c4a",
+        "android_client_info": {
+          "package_name": "com.justudyenglish"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBXn8zPw4zLEq0QXpd5DXGJ0SehqYFTBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
