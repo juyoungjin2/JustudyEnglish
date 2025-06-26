@@ -1,37 +1,54 @@
 // src/services/bookService.ts
-import { firestore, auth } from './firebase';
+
+import { 
+  getFirestore, 
+  collection, 
+  query, 
+  orderBy, 
+  getDocs,
+  addDoc,
+  updateDoc,
+  doc,
+  serverTimestamp
+} from '@react-native-firebase/firestore';
+import { getAuth } from '@react-native-firebase/auth';
 import { Book, BookData } from '../models/Book';
 import { Word, WordData } from '../models/Word';
-import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 
-const globalCol = firestore().collection('wordbooks');
-const customCol = (uid: string) =>
-  firestore().collection(`users/${uid}/customWordbooks`);
+const db = getFirestore();
+const auth = getAuth();
 
 // 1) 글로벌 단어장 가져오기
 export const fetchGlobalBooks = async (): Promise<Book[]> => {
-  const snap = await globalCol.orderBy('bookOrder').get();
-  return snap.docs.map(doc => {
-    const data = doc.data() as BookData; 
-    return { bookId: doc.id, ...data };
-  });
+  const colRef = collection(db, 'wordbooks');
+  const q = query(colRef, orderBy('bookOrder'));
+  const snap = await getDocs(q);
+  return snap.docs.map(docSnap => ({
+    bookId: docSnap.id,
+    ...(docSnap.data() as BookData)
+  }));
 };
 
 // 2) 내 커스텀 단어장 가져오기
 export const fetchCustomBooks = async (): Promise<Book[]> => {
-  const uid = auth().currentUser!.uid;
-  const snap = await customCol(uid).orderBy('bookOrder').get();
-  return snap.docs.map(doc => {
-    const data = doc.data() as BookData;
-    return { bookId: doc.id, ...data };
-  });
+  const uid = auth.currentUser!.uid;
+  const colRef = collection(db, 'users', uid, 'customWordbooks');
+  const q = query(colRef, orderBy('bookOrder'));
+  const snap = await getDocs(q);
+  return snap.docs.map(docSnap => ({
+    bookId: docSnap.id,
+    ...(docSnap.data() as BookData)
+  }));
 };
 
 // 3) 단어장 생성 (custom only)
-export const createCustomBook = async (book: Omit<BookData, 'createdAt' | 'updatedAt'>) => {
-  const uid = auth().currentUser!.uid;
-  const now = firestore.FieldValue.serverTimestamp() as FirebaseFirestoreTypes.Timestamp;
-  const ref = await customCol(uid).add({
+export const createCustomBook = async (
+  book: Omit<BookData, 'createdAt' | 'updatedAt'>
+): Promise<string> => {
+  const uid = auth.currentUser!.uid;
+  const colRef = collection(db, 'users', uid, 'customWordbooks');
+  const now = serverTimestamp();
+  const ref = await addDoc(colRef, {
     ...book,
     userId: uid,
     createdAt: now,
@@ -44,39 +61,38 @@ export const createCustomBook = async (book: Omit<BookData, 'createdAt' | 'updat
 export const updateBook = async (
   bookId: string,
   data: Partial<Pick<BookData, 'bookTitle' | 'bookOrder' | 'bookCover' | 'tags'>>
-) => {
-  const uid = auth().currentUser!.uid;
-  await customCol(uid).doc(bookId).update({
+): Promise<void> => {
+  const uid = auth.currentUser!.uid;
+  const docRef = doc(db, 'users', uid, 'customWordbooks', bookId);
+  await updateDoc(docRef, {
     ...data,
-    updatedAt: firestore.FieldValue.serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
 };
 
 // 5) 단어 가져오기 by 책 ID
 export const fetchWordsByBookId = async (bookId: string): Promise<Word[]> => {
-  const uid = auth().currentUser!.uid;
+  const uid = auth.currentUser!.uid;
 
-  // 글로벌 단어 하위 콜렉션
-  const globalWordsSnap = await globalCol
-    .doc(bookId)
-    .collection('words')
-    .orderBy('createdAt')
-    .get();
-  const globalWords = globalWordsSnap.docs.map(doc => {
-    const data = doc.data() as WordData;
-    return { id: doc.id, ...data };
-  });
+  // 글로벌 단어
+  const globalRef = collection(db, 'wordbooks', bookId, 'words');
+  const globalSnap = await getDocs(
+    query(globalRef, orderBy('createdAt'))
+  );
+  const globalWords = globalSnap.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...(docSnap.data() as WordData)
+  }));
 
-  // 커스텀 단어 하위 콜렉션
-  const customWordsSnap = await customCol(uid)
-    .doc(bookId)
-    .collection('words')
-    .orderBy('createdAt')
-    .get();
-  const customWords = customWordsSnap.docs.map(doc => {
-    const data = doc.data() as WordData;
-    return { id: doc.id, ...data };
-  });
+  // 커스텀 단어
+  const customRef = collection(db, 'users', uid, 'customWordbooks', bookId, 'words');
+  const customSnap = await getDocs(
+    query(customRef, orderBy('createdAt'))
+  );
+  const customWords = customSnap.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...(docSnap.data() as WordData)
+  }));
 
   return [...globalWords, ...customWords];
 };

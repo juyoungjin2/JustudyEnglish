@@ -1,11 +1,19 @@
+// src/screens/LoginScreen.tsx
+
 import React, { useState } from 'react';
 import {
   View, TextInput, Button, StyleSheet, Text, Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-// import { StackNavigationProp } from '@react-navigation/native-stack';
 import { StackNavigationProp } from '@react-navigation/stack';
+
 import { auth } from '../services/firebase';
+import {
+  signInWithEmailAndPassword,
+  sendEmailVerification,
+  signOut
+} from '@react-native-firebase/auth';
+
 import { RootStackParamList } from '../types';
 
 type LoginNavProp = StackNavigationProp<RootStackParamList, 'Login'>;
@@ -17,10 +25,13 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const credential = await auth().signInWithEmailAndPassword(email, password);
+      // ✅ auth() 대신 signInWithEmailAndPassword(auth, ...)
+      const credential = await signInWithEmailAndPassword(auth, email, password);
       const user = credential.user;
+
       if (!user.emailVerified) {
-        await auth().signOut();
+        // ✅ auth().signOut() → signOut(auth)
+        await signOut(auth);
         Alert.alert(
           '인증 필요',
           '이메일 인증돼야 로그인 가능해. 인증 메일 다시 보낼까?',
@@ -28,7 +39,8 @@ export default function LoginScreen() {
             {
               text: '예',
               onPress: async () => {
-                await user.sendEmailVerification();
+                // ✅ user.sendEmailVerification() → sendEmailVerification(user)
+                await sendEmailVerification(user);
                 Alert.alert('메일 전송됨', '인증 메일을 다시 보냈어.');
               },
             },
@@ -37,6 +49,7 @@ export default function LoginScreen() {
         );
         return;
       }
+
       Alert.alert('로그인 성공');
       navigation.replace('Home');
     } catch (e: any) {

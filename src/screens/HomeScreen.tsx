@@ -1,4 +1,5 @@
 // src/screens/HomeScreen.tsx
+
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, Button, StyleSheet, Alert,
@@ -6,7 +7,10 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+
 import { auth } from '../services/firebase';
+import { signOut } from '@react-native-firebase/auth';
+
 import { fetchGlobalBooks, fetchCustomBooks } from '../services/bookService';
 import { Book } from '../models/Book';
 import { RootStackParamList } from '../types';
@@ -18,7 +22,6 @@ export default function HomeScreen() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 홈 진입 시 글로벌 + 커스텀 단어장 불러오기
   useEffect(() => {
     const loadBooks = async () => {
       try {
@@ -37,18 +40,17 @@ export default function HomeScreen() {
     loadBooks();
   }, []);
 
-  // 로그아웃
   const handleLogout = async () => {
     try {
-      await auth().signOut();
+      // ✅ auth().signOut() → signOut(auth)
+      await signOut(auth);
       navigation.replace('Login');
     } catch (e: any) {
       Alert.alert('로그아웃 실패', e.message);
     }
   };
 
-  // 단어장 아이템 렌더
-   const renderItem = ({ item }: { item: Book }) => (
+  const renderItem = ({ item }: { item: Book }) => (
     <TouchableOpacity 
       style={styles.bookItem} 
       onPress={() => navigation.navigate('WordList', { bookId: item.bookId })} 

@@ -1,10 +1,10 @@
 // src/services/firebase.ts
 
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import { getApp } from '@react-native-firebase/app';
+import { getAuth } from '@react-native-firebase/auth';
+import { getFirestore } from '@react-native-firebase/firestore';
 
-// firebase.app() 같은 게 필요하면 아래처럼 import 할 수 있지만,
-// 현재는 auth, firestore만 쓰므로 생략해도 된다.
-// import app from '@react-native-firebase/app';
+const app = getApp();
 
-export { auth, firestore };
+export const auth = getAuth(app);
+export const firestore = getFirestore(app);
