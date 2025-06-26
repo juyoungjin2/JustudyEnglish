@@ -1,9 +1,9 @@
-// src/screens/LoginScreen.tsx
 import React, { useState } from 'react';
 import {
   View, TextInput, Button, StyleSheet, Text, Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+// import { StackNavigationProp } from '@react-navigation/native-stack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { auth } from '../services/firebase';
 import { RootStackParamList } from '../types';
@@ -38,7 +38,7 @@ export default function LoginScreen() {
         return;
       }
       Alert.alert('로그인 성공');
-      // TODO: 인증된 유저만 보이는 화면으로 이동
+      navigation.replace('Home');
     } catch (e: any) {
       Alert.alert('로그인 실패', e.message);
     }
