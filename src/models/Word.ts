@@ -3,8 +3,10 @@ import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 
 // Firestore에 저장되는 단어 데이터 타입
 export type WordData = {
+  // 단어가 속한 단어장 ID 매핑
+  bookId: string;
   // 단어 텍스트
-  text: string;
+  word: string;
   // 단어 뜻
   meaning: string;
   // 생성/수정 타임스탬프 (선택)

@@ -53,7 +53,7 @@ export default function WordListScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.item}>
-            <Text style={styles.text}>{item.text}</Text>
+            <Text style={styles.word}>{item.word}</Text>
             <Text style={styles.meaning}>{item.meaning}</Text>
           </View>
         )}
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 12,
   },
-  text: {
+  word: {
     fontSize: 18,
     fontWeight: 'bold',
   },

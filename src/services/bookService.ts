@@ -28,7 +28,7 @@ export const fetchCustomBooks = async (): Promise<Book[]> => {
 };
 
 // 3) 단어장 생성 (custom only)
-export const createCustomBook = async (book: Omit<BookData, 'createdAt' | 'updatedAt'>): Promise<string> => {
+export const createCustomBook = async (book: Omit<BookData, 'createdAt' | 'updatedAt'>) => {
   const uid = auth().currentUser!.uid;
   const now = firestore.FieldValue.serverTimestamp() as FirebaseFirestoreTypes.Timestamp;
   const ref = await customCol(uid).add({
@@ -44,7 +44,7 @@ export const createCustomBook = async (book: Omit<BookData, 'createdAt' | 'updat
 export const updateBook = async (
   bookId: string,
   data: Partial<Pick<BookData, 'bookTitle' | 'bookOrder' | 'bookCover' | 'tags'>>
-): Promise<void> => {
+) => {
   const uid = auth().currentUser!.uid;
   await customCol(uid).doc(bookId).update({
     ...data,
