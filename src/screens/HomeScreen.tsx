@@ -48,11 +48,14 @@ export default function HomeScreen() {
   };
 
   // 단어장 아이템 렌더
-  const renderItem = ({ item }: { item: Book }) => (
-    <TouchableOpacity style={styles.bookItem}>
-      <Image source={{ uri: item.bookCover }} style={styles.bookCover} />
-      <Text style={styles.bookTitle}>{item.bookTitle}</Text>
-    </TouchableOpacity>
+   const renderItem = ({ item }: { item: Book }) => (
+    <TouchableOpacity 
+      style={styles.bookItem} 
+      onPress={() => navigation.navigate('WordList', { bookId: item.bookId })} 
+    > 
+      <Image source={{ uri: item.bookCover }} style={styles.bookCover} /> 
+      <Text style={styles.bookTitle}>{item.bookTitle}</Text> 
+    </TouchableOpacity> 
   );
 
   return (

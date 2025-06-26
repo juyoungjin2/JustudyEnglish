@@ -1,3 +1,5 @@
+//src\models\Book.ts
+
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 
 // Firestore에 저장되는 순수 데이터 타입

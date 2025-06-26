@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import WordListScreen from './src/screens/WordListScreen';
 import { RootStackParamList } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -13,6 +14,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen
+          name="WordList" 
+          component={WordListScreen} 
+          options={{ title: '단어장 단어' }} 
+        />
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -28,6 +34,7 @@ export default function App() {
           component={HomeScreen}
           options={{ title: '홈' }}
         />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
