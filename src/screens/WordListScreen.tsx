@@ -111,7 +111,7 @@ export default function WordListScreen() {
                   <ActivityIndicator />
                 ) : (
                   <Ionicons
-                    name="volume-high-outline"
+                    name="volume-high"
                     size={24}
                     color={playingId === item.id ? 'blue' : 'black'}
                   />
