@@ -4,7 +4,7 @@ import axiosRetry from 'axios-retry';
 // import { getToken } from './storage';
 
 const instance = axios.create({
-  baseURL: 'http://192.168.219.104:3000/api', // 🚨 localhost 대신 에뮬레이터/디바이스에서 접근 가능한 IP로
+  baseURL: 'http://192.168.219.108:3000/api', // 🚨 localhost 대신 에뮬레이터/디바이스에서 접근 가능한 IP로
   timeout: 30000,
 });
 

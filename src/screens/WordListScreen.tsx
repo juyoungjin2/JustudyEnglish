@@ -32,7 +32,6 @@ export default function WordListScreen() {
   const [loading, setLoading] = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
-  // AudioRecorderPlayer 인스턴스
   const audioRecorderPlayer = useRef(new AudioRecorderPlayer()).current;
 
   useEffect(() => {
@@ -53,19 +52,13 @@ export default function WordListScreen() {
     async (word: string, id: string) => {
       setPlayingId(id);
       try {
-        // 백엔드 /pronounce 호출
         const res = await axios.post('/pronounce', { sentence: word });
         const audioContent: string = res.data.audioContent;
-
-        // base64 MP3 파일로 저장
         const filePath = `${RNFS.CachesDirectoryPath}/word_${Date.now()}.mp3`;
         await RNFS.writeFile(filePath, audioContent, 'base64');
-
-        // AudioRecorderPlayer 로 재생
         await audioRecorderPlayer.startPlayer(filePath);
         audioRecorderPlayer.setVolume(1.0);
         audioRecorderPlayer.addPlayBackListener(e => {
-          // 재생 완료 시 정리
           if (e.current_position === e.duration) {
             audioRecorderPlayer.stopPlayer();
             audioRecorderPlayer.removePlayBackListener();
@@ -101,6 +94,16 @@ export default function WordListScreen() {
               <View>
                 <Text style={styles.word}>{item.word}</Text>
                 <Text style={styles.meaning}>{item.meaning}</Text>
+                {item.example && item.example.length > 0 && (
+                  <View style={styles.exampleContainer}>
+                    {item.example.map((ex, idx) => (
+                      <View key={idx} style={styles.exampleItem}>
+                        <Text style={styles.exampleSentence}>{ex.sentence}</Text>
+                        <Text style={styles.exampleTranslate}>{ex.translateKorean}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
               </View>
               <TouchableOpacity
                 onPress={() => handlePlayWord(item.word, item.id)}
@@ -111,7 +114,7 @@ export default function WordListScreen() {
                   <ActivityIndicator />
                 ) : (
                   <Ionicons
-                    name="volume-high"
+                    name="volume-high-outline"
                     size={24}
                     color={playingId === item.id ? 'blue' : 'black'}
                   />
@@ -153,6 +156,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginTop: 4,
+  },
+  exampleContainer: {
+    marginTop: 8,
+  },
+  exampleItem: {
+    marginBottom: 6,
+  },
+  exampleSentence: {
+    fontSize: 14,
+    color: '#333',
+  },
+  exampleTranslate: {
+    fontSize: 14,
+    color: '#999',
   },
   iconButton: {
     padding: 8,
