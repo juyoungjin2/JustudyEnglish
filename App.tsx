@@ -6,6 +6,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import WordListScreen from './src/screens/WordListScreen';
+import WordEnrollPage from './src/screens/WordEnrollPage';
 import { RootStackParamList } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +34,11 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           options={{ title: '홈' }}
+        />
+         <Stack.Screen
+          name="WordEnroll"
+          component={WordEnrollPage}
+          options={{ title: '단어 등록' }}
         />
         
       </Stack.Navigator>

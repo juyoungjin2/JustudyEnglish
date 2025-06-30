@@ -1,3 +1,4 @@
+//src\utils\axiosConfig.ts
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 // 필요하면 토큰 가져오는 util 추가

@@ -1,6 +1,5 @@
 // src/screens/WordListScreen.tsx
-
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -28,10 +27,25 @@ export default function WordListScreen() {
   const navigation = useNavigation<WordListNavProp>();
   const { bookId } = route.params;
 
+  // 헤더 우측 + 버튼
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('WordEnroll')}
+          style={{ marginRight: 16 }}
+        >
+          <Ionicons name="add" size={24} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
+  // AudioRecorderPlayer 인스턴스
   const audioRecorderPlayer = useRef(new AudioRecorderPlayer()).current;
 
   useEffect(() => {
